@@ -57,7 +57,7 @@ class HttpRestClient implements DataSource {
       {Map<String, dynamic> headers}) async {
     if (headers == null) headers = _setDefaultHeaders();
 
-    var r = await http.get(source, headers: headers);
+    var r = await http.get(source, headers: headers).timeout(Duration(seconds: 20));
     return _processResponse(r);
   }
 
@@ -67,7 +67,7 @@ class HttpRestClient implements DataSource {
       Map<String, dynamic> headers}) async {
     if (headers == null) headers = _setDefaultHeaders();
 
-    var r = await http.post(source, headers: headers, body: json.encode(body));
+    var r = await http.post(source, headers: headers, body: json.encode(body)).timeout(Duration(seconds: 20));
     return _processResponse(r);
   }
 
@@ -77,7 +77,7 @@ class HttpRestClient implements DataSource {
       Map<String, dynamic> headers}) async {
     if (headers == null) headers = _setDefaultHeaders();
 
-    var r = await http.put(source, body: json.encode(body), headers: headers);
+    var r = await http.put(source, body: json.encode(body), headers: headers).timeout(Duration(seconds: 20));
     return _processResponse(r);
   }
 
@@ -86,7 +86,7 @@ class HttpRestClient implements DataSource {
       {Map<String, dynamic> headers}) async {
     if (headers == null) headers = _setDefaultHeaders();
 
-    var r = await http.delete(source, headers: headers);
+    var r = await http.delete(source, headers: headers).timeout(Duration(seconds: 20));
     return _processResponse(r);
   }
 
