@@ -1,9 +1,12 @@
 library datahandling;
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 
 class DataHandlerResponse<T> {
   int code;
@@ -24,9 +27,30 @@ abstract class DataSource {
 }
 
 class HttpRestClient implements DataSource {
+  var _client;
   static final HttpRestClient _instance = HttpRestClient._internal();
   factory HttpRestClient() => _instance;
-  HttpRestClient._internal();
+  HttpRestClient._internal() {
+    _setTrustedCerificate();
+  }
+
+  static bool _certificateCheck(X509Certificate cert, String host, int port) =>
+      true;
+      // host == 'local.domain.ext';
+
+  void _setTrustedCerificate() async {
+    // For server certificate verification
+    // ByteData data = await rootBundle.load('assets/certificate.crt');
+    // SecurityContext context = SecurityContext.defaultContext;
+    // context.setTrustedCertificatesBytes(data.buffer.asUint8List());
+    // var client = HttpClient(context: context);
+    // _client = IOClient(client);
+
+      // For Development purpose allow all self signed certificate
+    // var client = new HttpClient()..badCertificateCallback = (_certificateCheck);
+    // _client = IOClient(client);
+    _client = IOClient(HttpClient());
+  }
 
   @override
   Future<DataHandlerResponse> getAsync(String source,
@@ -72,9 +96,9 @@ class HttpRestClient implements DataSource {
   DataHandlerResponse _processResponse(http.Response response) {
     var headers = response.headers;
     var res = DataHandlerResponse();
-    res.isJson = true;
 
     if (headers['Content-Type'] == "application/json") {
+      res.isJson = true;
       res.success = _statusChecking(response);
       res.code = response.statusCode;
 
